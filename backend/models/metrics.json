@@ -1,0 +1,1226 @@
+{
+  "meta": {
+    "seed": 42,
+    "test_size": 0.2,
+    "sklearn": "1.5.2",
+    "python": "3.11.9",
+    "cv_sample": 15000,
+    "cv_folds": 5,
+    "n_total": 100000
+  },
+  "n_train": 80000,
+  "n_test": 20000,
+  "classes": [
+    "Spruce/Fir",
+    "Lodgepole Pine",
+    "Ponderosa Pine",
+    "Cottonwood/Willow",
+    "Aspen",
+    "Douglas-fir",
+    "Krummholz"
+  ],
+  "features": [
+    "Elevation",
+    "Aspect",
+    "Slope",
+    "Horizontal_Distance_To_Hydrology",
+    "Vertical_Distance_To_Hydrology",
+    "Horizontal_Distance_To_Roadways",
+    "Hillshade_9am",
+    "Hillshade_Noon",
+    "Hillshade_3pm",
+    "Horizontal_Distance_To_Fire_Points",
+    "Wilderness_Area1",
+    "Wilderness_Area2",
+    "Wilderness_Area3",
+    "Wilderness_Area4",
+    "Soil_Type1",
+    "Soil_Type2",
+    "Soil_Type3",
+    "Soil_Type4",
+    "Soil_Type5",
+    "Soil_Type6",
+    "Soil_Type7",
+    "Soil_Type8",
+    "Soil_Type9",
+    "Soil_Type10",
+    "Soil_Type11",
+    "Soil_Type12",
+    "Soil_Type13",
+    "Soil_Type14",
+    "Soil_Type15",
+    "Soil_Type16",
+    "Soil_Type17",
+    "Soil_Type18",
+    "Soil_Type19",
+    "Soil_Type20",
+    "Soil_Type21",
+    "Soil_Type22",
+    "Soil_Type23",
+    "Soil_Type24",
+    "Soil_Type25",
+    "Soil_Type26",
+    "Soil_Type27",
+    "Soil_Type28",
+    "Soil_Type29",
+    "Soil_Type30",
+    "Soil_Type31",
+    "Soil_Type32",
+    "Soil_Type33",
+    "Soil_Type34",
+    "Soil_Type35",
+    "Soil_Type36",
+    "Soil_Type37",
+    "Soil_Type38",
+    "Soil_Type39",
+    "Soil_Type40"
+  ],
+  "areas": [
+    "Rawah",
+    "Neota",
+    "Comanche Peak",
+    "Cache la Poudre"
+  ],
+  "class_counts": {
+    "Spruce/Fir": 211840,
+    "Lodgepole Pine": 283301,
+    "Ponderosa Pine": 35754,
+    "Cottonwood/Willow": 2747,
+    "Aspen": 9493,
+    "Douglas-fir": 17367,
+    "Krummholz": 20510
+  },
+  "results": [
+    {
+      "model": "Random Forest",
+      "train_acc": 96.31,
+      "test_acc": 88.59,
+      "gap": 7.72,
+      "cv_mean": 79.69,
+      "cv_std": 0.43,
+      "macro_f1": 79.82,
+      "bal_acc": 75.33,
+      "kappa": 0.8139,
+      "mcc": 0.815,
+      "fit_seconds": 2.44,
+      "inference_ms_per_1k": 11.33,
+      "latency_ms_single": 23.75,
+      "size_mb": 13.3,
+      "mcnemar_p_vs_best": null
+    },
+    {
+      "model": "Extra Trees",
+      "train_acc": 88.27,
+      "test_acc": 84.03,
+      "gap": 4.24,
+      "cv_mean": 76.71,
+      "cv_std": 0.37,
+      "macro_f1": 69.93,
+      "bal_acc": 64.68,
+      "kappa": 0.7375,
+      "mcc": 0.7399,
+      "fit_seconds": 1.62,
+      "inference_ms_per_1k": 4.4,
+      "latency_ms_single": 24.96,
+      "size_mb": 13.0,
+      "mcnemar_p_vs_best": 2.3312649496743454e-114
+    },
+    {
+      "model": "Gradient Boosting",
+      "train_acc": 77.86,
+      "test_acc": 77.35,
+      "gap": 0.51,
+      "cv_mean": 76.01,
+      "cv_std": 0.57,
+      "macro_f1": 68.07,
+      "bal_acc": 64.43,
+      "kappa": 0.6301,
+      "mcc": 0.6307,
+      "fit_seconds": 199.02,
+      "inference_ms_per_1k": 7.93,
+      "latency_ms_single": 0.46,
+      "size_mb": 0.3,
+      "mcnemar_p_vs_best": 0.0
+    },
+    {
+      "model": "Decision Tree",
+      "train_acc": 95.32,
+      "test_acc": 85.45,
+      "gap": 9.87,
+      "cv_mean": 74.69,
+      "cv_std": 0.58,
+      "macro_f1": 76.4,
+      "bal_acc": 74.86,
+      "kappa": 0.7644,
+      "mcc": 0.7648,
+      "fit_seconds": 0.96,
+      "inference_ms_per_1k": 0.24,
+      "latency_ms_single": 0.04,
+      "size_mb": 0.2,
+      "mcnemar_p_vs_best": 2.7838981820040295e-34
+    },
+    {
+      "model": "KNN",
+      "train_acc": 91.35,
+      "test_acc": 86.59,
+      "gap": 4.76,
+      "cv_mean": 76.25,
+      "cv_std": 0.49,
+      "macro_f1": 77.08,
+      "bal_acc": 74.98,
+      "kappa": 0.7831,
+      "mcc": 0.7834,
+      "fit_seconds": 0.08,
+      "inference_ms_per_1k": 120.64,
+      "latency_ms_single": 4.5,
+      "size_mb": 5.5,
+      "mcnemar_p_vs_best": 1.859053585547838e-18
+    },
+    {
+      "model": "Logistic Regression",
+      "train_acc": 72.32,
+      "test_acc": 72.02,
+      "gap": 0.3,
+      "cv_mean": 72.25,
+      "cv_std": 0.57,
+      "macro_f1": 53.69,
+      "bal_acc": 51.92,
+      "kappa": 0.5409,
+      "mcc": 0.5418,
+      "fit_seconds": 6.17,
+      "inference_ms_per_1k": 0.37,
+      "latency_ms_single": 0.1,
+      "size_mb": 0.0,
+      "mcnemar_p_vs_best": 0.0
+    }
+  ],
+  "best_model": "Random Forest",
+  "per_class": {
+    "Random Forest": {
+      "precision": [
+        90.4,
+        87.6,
+        84.6,
+        84.2,
+        96.7,
+        86.0,
+        92.8
+      ],
+      "recall": [
+        86.3,
+        93.6,
+        90.3,
+        68.1,
+        36.1,
+        68.7,
+        84.3
+      ],
+      "f1": [
+        88.3,
+        90.5,
+        87.3,
+        75.3,
+        52.6,
+        76.4,
+        88.3
+      ],
+      "support": [
+        7292,
+        9752,
+        1231,
+        94,
+        327,
+        598,
+        706
+      ]
+    },
+    "Extra Trees": {
+      "precision": [
+        86.4,
+        83.3,
+        75.6,
+        86.7,
+        98.3,
+        85.9,
+        88.3
+      ],
+      "recall": [
+        80.8,
+        91.5,
+        89.0,
+        55.3,
+        17.7,
+        46.0,
+        72.4
+      ],
+      "f1": [
+        83.5,
+        87.2,
+        81.8,
+        67.5,
+        30.1,
+        59.9,
+        79.5
+      ],
+      "support": [
+        7292,
+        9752,
+        1231,
+        94,
+        327,
+        598,
+        706
+      ]
+    },
+    "Gradient Boosting": {
+      "precision": [
+        75.9,
+        78.5,
+        75.3,
+        78.2,
+        88.5,
+        64.8,
+        85.3
+      ],
+      "recall": [
+        75.2,
+        82.6,
+        82.9,
+        72.3,
+        23.5,
+        41.5,
+        72.9
+      ],
+      "f1": [
+        75.6,
+        80.5,
+        78.9,
+        75.1,
+        37.2,
+        50.6,
+        78.6
+      ],
+      "support": [
+        7292,
+        9752,
+        1231,
+        94,
+        327,
+        598,
+        706
+      ]
+    },
+    "Decision Tree": {
+      "precision": [
+        86.4,
+        86.0,
+        86.1,
+        65.7,
+        71.6,
+        71.1,
+        85.7
+      ],
+      "recall": [
+        83.7,
+        89.6,
+        82.9,
+        69.1,
+        44.0,
+        68.4,
+        86.3
+      ],
+      "f1": [
+        85.0,
+        87.7,
+        84.4,
+        67.4,
+        54.5,
+        69.7,
+        86.0
+      ],
+      "support": [
+        7292,
+        9752,
+        1231,
+        94,
+        327,
+        598,
+        706
+      ]
+    },
+    "KNN": {
+      "precision": [
+        87.6,
+        87.6,
+        83.1,
+        69.4,
+        76.7,
+        69.4,
+        85.6
+      ],
+      "recall": [
+        85.7,
+        90.4,
+        83.3,
+        62.8,
+        52.3,
+        63.4,
+        87.0
+      ],
+      "f1": [
+        86.7,
+        89.0,
+        83.2,
+        65.9,
+        62.2,
+        66.3,
+        86.3
+      ],
+      "support": [
+        7292,
+        9752,
+        1231,
+        94,
+        327,
+        598,
+        706
+      ]
+    },
+    "Logistic Regression": {
+      "precision": [
+        70.3,
+        74.6,
+        68.0,
+        65.3,
+        26.7,
+        49.0,
+        70.6
+      ],
+      "recall": [
+        69.6,
+        79.4,
+        81.0,
+        52.1,
+        1.2,
+        23.9,
+        56.2
+      ],
+      "f1": [
+        69.9,
+        76.9,
+        73.9,
+        58.0,
+        2.3,
+        32.1,
+        62.6
+      ],
+      "support": [
+        7292,
+        9752,
+        1231,
+        94,
+        327,
+        598,
+        706
+      ]
+    }
+  },
+  "confusion_matrix": [
+    [
+      6292,
+      962,
+      0,
+      0,
+      0,
+      0,
+      38
+    ],
+    [
+      550,
+      9126,
+      46,
+      0,
+      3,
+      19,
+      8
+    ],
+    [
+      0,
+      63,
+      1111,
+      9,
+      1,
+      47,
+      0
+    ],
+    [
+      0,
+      0,
+      29,
+      64,
+      0,
+      1,
+      0
+    ],
+    [
+      7,
+      195,
+      7,
+      0,
+      118,
+      0,
+      0
+    ],
+    [
+      0,
+      64,
+      120,
+      3,
+      0,
+      411,
+      0
+    ],
+    [
+      109,
+      2,
+      0,
+      0,
+      0,
+      0,
+      595
+    ]
+  ],
+  "group_importance": {
+    "Random Forest": {
+      "Elevation": 0.2636,
+      "Slope and aspect": 0.0767,
+      "Water distance": 0.1037,
+      "Road distance": 0.1016,
+      "Hillshade": 0.1224,
+      "Fire-point distance": 0.0921,
+      "Wilderness area": 0.0733,
+      "Soil type": 0.1667
+    },
+    "Extra Trees": {
+      "Elevation": 0.2151,
+      "Slope and aspect": 0.0545,
+      "Water distance": 0.0645,
+      "Road distance": 0.0716,
+      "Hillshade": 0.0794,
+      "Fire-point distance": 0.0576,
+      "Wilderness area": 0.1213,
+      "Soil type": 0.3361
+    },
+    "Gradient Boosting": {
+      "Elevation": 0.6412,
+      "Slope and aspect": 0.01,
+      "Water distance": 0.0498,
+      "Road distance": 0.0583,
+      "Hillshade": 0.0388,
+      "Fire-point distance": 0.0431,
+      "Wilderness area": 0.0445,
+      "Soil type": 0.1143
+    },
+    "Decision Tree": {
+      "Elevation": 0.3665,
+      "Slope and aspect": 0.0482,
+      "Water distance": 0.1054,
+      "Road distance": 0.1304,
+      "Hillshade": 0.095,
+      "Fire-point distance": 0.1201,
+      "Wilderness area": 0.0301,
+      "Soil type": 0.1042
+    }
+  },
+  "examples": [
+    {
+      "label": "Spruce/Fir",
+      "features": [
+        3256.0,
+        223.0,
+        18.0,
+        330.0,
+        80.0,
+        3164.0,
+        194.0,
+        254.0,
+        192.0,
+        3122.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "label": "Lodgepole Pine",
+      "features": [
+        3004.0,
+        207.0,
+        13.0,
+        636.0,
+        83.0,
+        1947.0,
+        210.0,
+        252.0,
+        174.0,
+        2240.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "label": "Ponderosa Pine",
+      "features": [
+        2002.0,
+        42.0,
+        33.0,
+        67.0,
+        45.0,
+        108.0,
+        205.0,
+        150.0,
+        57.0,
+        60.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "label": "Cottonwood/Willow",
+      "features": [
+        2046.0,
+        102.0,
+        22.0,
+        0.0,
+        0.0,
+        335.0,
+        251.0,
+        204.0,
+        70.0,
+        601.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "label": "Aspen",
+      "features": [
+        2814.0,
+        102.0,
+        22.0,
+        153.0,
+        92.0,
+        1950.0,
+        250.0,
+        206.0,
+        72.0,
+        659.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "label": "Douglas-fir",
+      "features": [
+        2797.0,
+        34.0,
+        22.0,
+        366.0,
+        102.0,
+        992.0,
+        211.0,
+        187.0,
+        103.0,
+        350.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "label": "Krummholz",
+      "features": [
+        3228.0,
+        183.0,
+        15.0,
+        120.0,
+        13.0,
+        2826.0,
+        223.0,
+        249.0,
+        154.0,
+        2490.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "ablation": {
+    "train_size": 30000,
+    "n_estimators": [
+      {
+        "n": 10,
+        "test_acc": 83.91,
+        "fit_s": 0.19
+      },
+      {
+        "n": 25,
+        "test_acc": 85.75,
+        "fit_s": 0.34
+      },
+      {
+        "n": 50,
+        "test_acc": 86.41,
+        "fit_s": 0.52
+      },
+      {
+        "n": 100,
+        "test_acc": 86.59,
+        "fit_s": 0.92
+      },
+      {
+        "n": 200,
+        "test_acc": 86.63,
+        "fit_s": 1.73
+      }
+    ],
+    "max_depth": [
+      {
+        "depth": "3",
+        "train_acc": 67.66,
+        "test_acc": 67.07
+      },
+      {
+        "depth": "5",
+        "train_acc": 70.8,
+        "test_acc": 70.12
+      },
+      {
+        "depth": "10",
+        "train_acc": 80.04,
+        "test_acc": 76.1
+      },
+      {
+        "depth": "15",
+        "train_acc": 90.37,
+        "test_acc": 79.36
+      },
+      {
+        "depth": "20",
+        "train_acc": 96.5,
+        "test_acc": 80.32
+      },
+      {
+        "depth": "30",
+        "train_acc": 99.74,
+        "test_acc": 79.67
+      },
+      {
+        "depth": "None",
+        "train_acc": 100.0,
+        "test_acc": 79.36
+      }
+    ],
+    "feature_groups": [
+      {
+        "variant": "All 54 features",
+        "n_features": 54,
+        "test_acc": 86.59
+      },
+      {
+        "variant": "Without soil type",
+        "n_features": 14,
+        "test_acc": 84.7
+      },
+      {
+        "variant": "Without wilderness area",
+        "n_features": 50,
+        "test_acc": 85.67
+      },
+      {
+        "variant": "Without water distances",
+        "n_features": 52,
+        "test_acc": 85.38
+      },
+      {
+        "variant": "Without all distances",
+        "n_features": 50,
+        "test_acc": 75.7
+      },
+      {
+        "variant": "10 cartographic only",
+        "n_features": 10,
+        "test_acc": 83.38
+      },
+      {
+        "variant": "Elevation only",
+        "n_features": 1,
+        "test_acc": 66.07
+      }
+    ],
+    "data_fraction": [
+      {
+        "fraction": 0.05,
+        "n": 4000,
+        "test_acc": 76.91
+      },
+      {
+        "fraction": 0.1,
+        "n": 8000,
+        "test_acc": 80.48
+      },
+      {
+        "fraction": 0.25,
+        "n": 20000,
+        "test_acc": 84.78
+      },
+      {
+        "fraction": 0.5,
+        "n": 40000,
+        "test_acc": 87.68
+      },
+      {
+        "fraction": 1.0,
+        "n": 80000,
+        "test_acc": 90.68
+      }
+    ],
+    "scaling": [
+      {
+        "model": "KNN",
+        "raw": 83.38,
+        "scaled": 81.88
+      },
+      {
+        "model": "Logistic Regression",
+        "raw": 67.73,
+        "scaled": 72.1
+      }
+    ]
+  },
+  "biome": {
+    "areas": [
+      "Rawah",
+      "Neota",
+      "Comanche Peak",
+      "Cache la Poudre"
+    ],
+    "sample": 30000,
+    "models": {
+      "Random Forest": {
+        "within": [
+          83.81,
+          87.62,
+          82.56,
+          76.32
+        ],
+        "loao": [
+          66.99,
+          56.24,
+          59.61,
+          19.79
+        ]
+      },
+      "Extra Trees": {
+        "within": [
+          80.67,
+          79.48,
+          78.89,
+          66.84
+        ],
+        "loao": [
+          56.32,
+          56.69,
+          48.84,
+          14.79
+        ]
+      },
+      "Gradient Boosting": {
+        "within": [
+          79.78,
+          88.6,
+          76.79,
+          74.21
+        ],
+        "loao": [
+          65.41,
+          56.69,
+          60.39,
+          27.05
+        ]
+      },
+      "Decision Tree": {
+        "within": [
+          84.37,
+          89.25,
+          78.55,
+          71.32
+        ],
+        "loao": [
+          58.43,
+          47.94,
+          52.3,
+          27.32
+        ]
+      },
+      "KNN": {
+        "within": [
+          82.44,
+          87.62,
+          81.15,
+          78.68
+        ],
+        "loao": [
+          48.94,
+          54.34,
+          42.14,
+          24.32
+        ]
+      },
+      "Logistic Regression": {
+        "within": [
+          76.59,
+          70.68,
+          73.65,
+          64.47
+        ],
+        "loao": [
+          67.44,
+          61.79,
+          55.56,
+          39.32
+        ]
+      }
+    },
+    "area_class_counts": [
+      [
+        105717,
+        146197,
+        0,
+        0,
+        3781,
+        0,
+        5101
+      ],
+      [
+        18595,
+        8985,
+        0,
+        0,
+        0,
+        0,
+        2304
+      ],
+      [
+        87528,
+        125093,
+        14300,
+        0,
+        5712,
+        7626,
+        13105
+      ],
+      [
+        0,
+        3026,
+        21454,
+        2747,
+        0,
+        9741,
+        0
+      ]
+    ]
+  }
+}

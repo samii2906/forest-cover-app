@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which forest is this, and what does the answer cost?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--paper:#edf1ee;--panel:#f8faf8;--ink:#12251c;--mut:#506257;--line:#cfd9d2;--moss:#2c6a4c;--deep:#17382a;--lichen:#a9c7b3;--blue:#2f6f9f;--ochre:#b8801e;--rust:#a33b2d}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 "Public Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:Newsreader,Georgia,serif;font-weight:600;line-height:1.15;margin:0}
+h2{font-size:32px;margin-bottom:10px}h3{font-size:19px;margin:28px 0 8px}
+a{color:var(--moss)}
+.shell{display:grid;grid-template-columns:210px 1fr;min-height:100vh}
+aside{position:sticky;top:0;height:100vh;padding:28px 20px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:20px}
+.brand{font:600 20px/1.2 Newsreader,Georgia,serif}
+aside nav{display:flex;flex-direction:column;gap:2px}
+aside nav a{padding:7px 10px;border-radius:4px;color:var(--mut);text-decoration:none;font-size:14px}
+aside nav a.on{background:#dfe8e2;color:var(--ink);font-weight:600}
+aside small{color:var(--mut);margin-top:auto}
+main{min-width:0}
+.hero{background:var(--deep);color:#e9f2ec;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);overflow:hidden;min-height:520px}
+.hero .txt{padding:64px 48px}
+.hero h1{font-size:clamp(34px,4.4vw,56px);letter-spacing:-.01em;max-width:15ch}
+.hero p{max-width:56ch;color:#c4d8cb}
+.finds{margin-top:26px;display:grid;gap:14px;max-width:58ch}
+.finds p{margin:0;padding-left:14px;border-left:3px solid var(--ochre);color:#e9f2ec}
+.hero svg{width:100%;height:100%;min-height:360px}
+.hero path{fill:none;stroke:#7fae92;stroke-width:1;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.6s ease-out forwards}
+.hero path.major{stroke:#c9e0d1;stroke-width:1.6}
+.hero text{fill:#a9c7b3;font-size:10px}
+@keyframes draw{to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.hero path{animation:none;stroke-dashoffset:0}html{scroll-behavior:auto}}
+.s{padding:64px 48px;border-top:1px solid var(--line)}
+.lede{max-width:66ch;color:var(--mut);margin:0 0 26px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:44px}
+.chartbox{position:relative;height:340px}.chartbox.sm{height:260px}
+.sliders{display:grid;grid-template-columns:1fr 1fr;gap:14px 22px}
+label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mut);margin-bottom:3px}
+label output{color:var(--ink);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--moss)}
+select{width:100%;padding:8px;border:1px solid var(--line);background:var(--panel);border-radius:4px;font:inherit;color:var(--ink)}
+.bar{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-top:20px}.bar>div{flex:1;min-width:160px}
+button.go{background:var(--moss);color:#fff;border:0;padding:10px 24px;border-radius:4px;font:600 14px "Public Sans";cursor:pointer}
+button.go:hover{background:var(--deep)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.answer{font:600 40px/1.1 Newsreader,Georgia,serif;color:var(--moss);margin:4px 0}
+.pb{display:grid;grid-template-columns:130px 1fr 52px;gap:8px;align-items:center;font-size:13px;margin:5px 0}
+.pb i{display:block;height:9px;background:var(--moss);border-radius:2px}
+.pb span:last-child{text-align:right;font-variant-numeric:tabular-nums}
+table.t{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.t th,.t td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.t th{font-weight:600;color:var(--mut)}.t th:first-child,.t td:first-child{text-align:left}
+.t tr.best td{background:#e4eee7;font-weight:600}.t td.dis{color:var(--rust);font-weight:600}
+.scroll{overflow-x:auto}
+.note{font-size:13px;color:var(--mut);max-width:70ch}
+.err{color:var(--rust)}
+code{background:#dfe8e2;padding:1px 5px;border-radius:3px;font-size:13px}
+pre{background:var(--deep);color:#d6e8dc;padding:16px;border-radius:4px;overflow-x:auto;font-size:13px}
+@media(max-width:980px){.shell{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;border:0;border-bottom:1px solid var(--line)}aside nav{flex-direction:row;flex-wrap:wrap}aside small{display:none}
+.hero{grid-template-columns:1fr}.hero .txt{padding:40px 24px}.s{padding:44px 24px}.two{grid-template-columns:1fr}.sliders{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside>
+  <div class="brand">Forest cover<br>classifier</div>
+  <nav id="nav">
+    <a href="#overview" class="on">Overview</a><a href="#classify">Classify a location</a>
+    <a href="#cost">Accuracy and cost</a><a href="#ablation">Ablations</a>
+    <a href="#biome">Biome-locked test</a><a href="#classes">Classes and features</a>
+    <a href="#method">Method and limits</a>
+  </nav>
+  <small>Supports SDG 15, Life on Land</small>
+</aside>
+<main>
+
+<section class="hero" id="overview">
+  <div class="txt">
+    <h1>Which forest is this, and what does the answer cost?</h1>
+    <p>Six classifiers label 30 m cells of Colorado's Roosevelt National Forest from terrain, water, road and soil data. Accuracy is half the story; this dashboard also measures what each model spends to get it, and what happens when it meets a wilderness area it has never seen.</p>
+    <div class="finds" id="finds"><p class="err" id="loadErr"></p></div>
+  </div>
+  <svg id="contours" viewBox="0 0 520 520" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+</section>
+
+<section class="s" id="classify">
+  <h2>Classify a location</h2>
+  <p class="lede">Set the terrain, pick a model, and see its answer next to all the others. Latency is measured on the server for this single prediction.</p>
+  <div class="two">
+    <div>
+      <div class="sliders" id="sliders"></div>
+      <div class="sliders" style="margin-top:14px">
+        <div><label for="wilderness_area">Wilderness area</label><select id="wilderness_area"></select></div>
+        <div><label for="soil_type">Soil type</label><select id="soil_type"></select></div>
+      </div>
+      <div class="bar">
+        <div><label for="model">Headline model</label><select id="model"></select></div>
+        <div><label for="example">Start from a real location</label><select id="example"><option value="">Choose a cover type</option></select></div>
+        <button class="go" id="goBtn">Classify</button>
+      </div>
+      <p class="err" id="err"></p>
+    </div>
+    <div id="resultBox"><p class="note">The answer appears here. The first request loads every model into memory and can take a few seconds.</p></div>
+  </div>
+</section>
+
+<section class="s" id="cost">
+  <h2>Accuracy and cost</h2>
+  <p class="lede">Reasoning cost is measured, not assumed: fit time, batch and single-sample inference time, and model size on disk. The best model is shaded; the last column is a McNemar test of every model against it on the same test set.</p>
+  <div class="chartbox"><canvas id="cPareto"></canvas></div>
+  <p class="note">Bubble area follows model size on disk. Up and to the left is better.</p>
+  <div class="chartbox sm" style="margin-top:28px"><canvas id="cAcc"></canvas></div>
+  <h3>Full comparison</h3>
+  <div class="scroll"><table class="t" id="tbl"></table></div>
+</section>
+
+<section class="s" id="ablation">
+  <h2>What each design choice buys</h2>
+  <p class="lede" id="ablLede"></p>
+  <div class="two">
+    <div><h3>Number of trees (Random Forest)</h3><div class="chartbox sm"><canvas id="aTrees"></canvas></div></div>
+    <div><h3>Tree depth (Decision Tree)</h3><div class="chartbox sm"><canvas id="aDepth"></canvas></div></div>
+    <div><h3>Which features matter (Random Forest)</h3><div class="chartbox sm"><canvas id="aFeat"></canvas></div></div>
+    <div><h3>How much data is needed</h3><div class="chartbox sm"><canvas id="aFrac"></canvas></div></div>
+  </div>
+  <h3>Does feature scaling matter?</h3>
+  <div class="scroll" style="max-width:520px"><table class="t" id="tScale"></table></div>
+</section>
+
+<section class="s" id="biome">
+  <h2>Biome-locked test</h2>
+  <p class="lede">The four wilderness areas stand in for biomes. Each model is scored twice per area: trained and tested inside the area, and trained on the other three then tested on the held-out area. The gap is the price of leaving home.</p>
+  <div class="bar" style="margin:0 0 14px"><div style="max-width:260px"><label for="bModel">Model</label><select id="bModel"></select></div></div>
+  <div class="two">
+    <div class="chartbox sm"><canvas id="bBars"></canvas></div>
+    <div class="chartbox sm"><canvas id="bMix"></canvas></div>
+  </div>
+  <p class="note">Right: share of each cover type per area. Areas differ in which species they contain at all, so a model cannot name a class it never saw in training.</p>
+  <h3>Mean over the four areas</h3>
+  <div class="scroll" style="max-width:640px"><table class="t" id="tBiome"></table></div>
+</section>
+
+<section class="s" id="classes">
+  <h2>Classes and features</h2>
+  <p class="lede">The data are not balanced: two cover types make up about 85% of cells, so macro-F1 and per-class scores matter as much as overall accuracy.</p>
+  <h3>F1 by cover type (%)</h3>
+  <div class="scroll"><table class="t" id="tF1"></table></div>
+  <div class="two">
+    <div><h3 id="cmTitle">Confusion matrix</h3><div class="scroll"><table class="t" id="tCM" style="font-size:12px"></table></div>
+      <p class="note">Rows are true classes; each cell is the share of that class assigned to the column.</p></div>
+    <div><h3>Feature group importance</h3>
+      <div style="max-width:260px;margin-bottom:8px"><label for="fiModel">Model</label><select id="fiModel"></select></div>
+      <div class="chartbox sm"><canvas id="fiChart"></canvas></div></div>
+  </div>
+</section>
+
+<section class="s" id="method">
+  <h2>Method and limits</h2>
+  <div class="two">
+    <div id="methodTxt"></div>
+    <div>
+      <h3>Limits</h3>
+      <p class="note">The input is tabular, not multimodal; the study covers one forest in one region; wilderness areas are a proxy for biomes; and a single train/test split is complemented, not replaced, by cross-validation on a subsample. Latency was measured on a CPU-only desktop and will differ elsewhere.</p>
+    </div>
+  </div>
+</section>
+</main>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const COL={"Random Forest":"#2c6a4c","Extra Trees":"#6aa583","Gradient Boosting":"#b8801e","Decision Tree":"#8a6d3b","KNN":"#2f6f9f","Logistic Regression":"#a33b2d"};
+const CC=["#2c6a4c","#8fb996","#b8801e","#2f6f9f","#d9b44a","#6b4e71","#a33b2d"];
+Chart.defaults.font.family="'Public Sans',system-ui,sans-serif";Chart.defaults.color="#3d5247";Chart.defaults.borderColor="#d3ddd6";
+const charts={};const chart=(id,cfg)=>{charts[id]?.destroy();charts[id]=new Chart(document.getElementById(id),cfg)};
+const fmt=n=>n.toLocaleString("en-US"),pf=p=>p==null?"best":p<0.001?"<0.001":p.toFixed(3);
+const RANGES=[["elevation","Elevation (m)",1859,3858,1,2900],["aspect","Aspect (deg)",0,360,1,150],["slope","Slope (deg)",0,66,1,12],
+["h_dist_hydrology","Water, horizontal (m)",0,1400,10,250],["v_dist_hydrology","Water, vertical (m)",-170,600,5,30],["h_dist_roadways","Road distance (m)",0,7100,50,2000],
+["hillshade_9am","Hillshade 9 am",0,254,1,220],["hillshade_noon","Hillshade noon",99,254,1,230],["hillshade_3pm","Hillshade 3 pm",0,254,1,140],["h_dist_fire","Fire-point distance (m)",0,7200,50,2000]];
+const AREAS=["Rawah","Neota","Comanche Peak","Cache la Poudre"];
+let M=null;
+
+/* hero contour lines: one draw-in sequence */
+(function(){const svg=$("#contours");let h="";
+for(let k=1;k<=13;k++){let d="";for(let a=0;a<=6.30;a+=.06){const r=17*k*(1+.16*Math.sin(2*a+.35*k)+.09*Math.sin(5*a-.5*k)+.05*Math.sin(9*a+k));
+d+=(a?"L":"M")+(300+r*Math.cos(a)).toFixed(1)+" "+(270+r*.9*Math.sin(a)).toFixed(1)}
+h+=`<path pathLength="1" d="${d}Z" class="${k%4==0?"major":""}" style="animation-delay:${k*.09}s"/>`;
+if(k%4==0)h+=`<text x="${300+17*k*1.2}" y="${272}">${fmt(1800+k*150)} m</text>`}
+svg.innerHTML=h})();
+
+/* form */
+$("#sliders").innerHTML=RANGES.map(([k,l,mn,mx,st,v])=>`<div><label for="${k}">${l} <output id="o_${k}">${v}</output></label><input type="range" id="${k}" min="${mn}" max="${mx}" step="${st}" value="${v}"></div>`).join("");
+RANGES.forEach(([k])=>$("#"+k).oninput=e=>$("#o_"+k).textContent=e.target.value);
+$("#wilderness_area").innerHTML=AREAS.map((a,i)=>`<option value="${i+1}">${a}</option>`).join("");
+$("#soil_type").innerHTML=Array.from({length:40},(_,i)=>`<option value="${i+1}">Soil type ${i+1}</option>`).join("");
+$("#example").onchange=e=>{if(e.target.value==="")return;const f=M.examples[+e.target.value].features;
+RANGES.forEach(([k],j)=>{$("#"+k).value=f[j];$("#o_"+k).textContent=Math.round(f[j])});
+$("#wilderness_area").value=f.slice(10,14).indexOf(1)+1;$("#soil_type").value=f.slice(14,54).indexOf(1)+1};
+
+let last=null;
+async function classify(){
+  $("#err").textContent="";$("#goBtn").disabled=true;$("#resultBox").innerHTML='<p class="note">Running all models...</p>';
+  const body={model:$("#model").value,wilderness_area:+$("#wilderness_area").value,soil_type:+$("#soil_type").value};
+  RANGES.forEach(([k])=>body[k]=+$("#"+k).value);
+  try{const r=await fetch("/api/predict_all",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const d=await r.json();if(!r.ok)throw new Error(typeof d.detail==="string"?d.detail:"A value is outside the allowed range.");
+    last=d.results;showResult()}catch(e){$("#err").textContent=e.message;$("#resultBox").innerHTML=""}
+  $("#goBtn").disabled=false}
+function showResult(){if(!last)return;const h=last.find(r=>r.model===$("#model").value)||last[0];
+const agree=last.filter(r=>r.prediction===h.prediction).length;
+const pb=Object.entries(h.probabilities).sort((a,b)=>b[1]-a[1]).map(([c,p])=>`<div class="pb"><span>${c}</span><i style="width:${p}%"></i><span>${p}%</span></div>`).join("");
+$("#resultBox").innerHTML=`<div class="note">${h.model} says</div><div class="answer">${h.prediction}</div>
+<div class="note">Confidence ${h.confidence}%. ${agree} of ${last.length} models agree.</div><div style="margin:14px 0">${pb}</div>
+<div class="scroll"><table class="t"><tr><th>Model</th><th>Answer</th><th>Confidence</th><th>Latency (ms)</th></tr>
+${last.map(r=>`<tr class="${r.model===h.model?"best":""}"><td>${r.model}</td><td class="${r.prediction!==h.prediction?"dis":""}">${r.prediction}</td><td>${r.confidence}%</td><td>${r.latency_ms}</td></tr>`).join("")}</table></div>`}
+$("#goBtn").onclick=classify;$("#model").onchange=showResult;
+
+/* sections */
+function overview(){const R=M.results,b=R.find(r=>r.model===M.best_model);
+const fast=R.reduce((a,r)=>r.inference_ms_per_1k<a.inference_ms_per_1k?r:a);
+const bi=M.biome?.models[b.model];const mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
+let h=`<p>${b.model} labels ${b.test_acc}% of ${fmt(M.n_test)} held-out cells correctly (macro-F1 ${b.macro_f1}%).</p>
+<p>That costs ${b.inference_ms_per_1k} ms per 1,000 predictions and ${b.size_mb} MB on disk. ${fast.model} needs ${fast.inference_ms_per_1k} ms and ${fast.size_mb} MB but is ${(b.test_acc-fast.test_acc).toFixed(1)} points less accurate.</p>`;
+if(bi)h+=`<p>Hold out a whole wilderness area and ${b.model} falls from ${mean(bi.within).toFixed(1)}% to ${mean(bi.loao).toFixed(1)}% on average.</p>`;
+$("#finds").innerHTML=h}
+
+function cost(){const R=M.results;
+chart("cPareto",{type:"bubble",data:{datasets:R.map(r=>({label:r.model,data:[{x:Math.max(r.inference_ms_per_1k,.01),y:r.test_acc,r:Math.min(30,Math.max(6,Math.sqrt(r.size_mb)*1.6))}],backgroundColor:COL[r.model]+"cc",borderColor:COL[r.model]}))},
+options:{maintainAspectRatio:false,scales:{x:{type:"logarithmic",title:{display:true,text:"Inference time per 1,000 predictions (ms, log scale)"}},y:{title:{display:true,text:"Test accuracy (%)"}}},
+plugins:{tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y}%, ${c.parsed.x} ms per 1k, ${R[c.datasetIndex].size_mb} MB`}}}}});
+chart("cAcc",{type:"bar",data:{labels:R.map(r=>r.model),datasets:[{label:"Train accuracy (%)",data:R.map(r=>r.train_acc),backgroundColor:"#a9c7b3"},{label:"Test accuracy (%)",data:R.map(r=>r.test_acc),backgroundColor:"#2c6a4c"}]},
+options:{maintainAspectRatio:false,scales:{y:{min:60,max:100}}}});
+$("#tbl").innerHTML=`<tr><th>Model</th><th>Test %</th><th>5-fold CV %</th><th>Train-test gap</th><th>Macro-F1</th><th>MCC</th><th>Fit (s)</th><th>ms per 1k</th><th>Single (ms)</th><th>Size (MB)</th><th>McNemar p</th></tr>`+
+R.map(r=>`<tr class="${r.model===M.best_model?"best":""}"><td>${r.model}</td><td>${r.test_acc}</td><td>${r.cv_mean} ± ${r.cv_std}</td><td>${r.gap}</td><td>${r.macro_f1}</td><td>${r.mcc}</td><td>${r.fit_seconds}</td><td>${r.inference_ms_per_1k}</td><td>${r.latency_ms_single}</td><td>${r.size_mb}</td><td>${pf(r.mcnemar_p_vs_best)}</td></tr>`).join("")}
+
+function ablation(){const A=M.ablation;if(!A){$("#ablLede").textContent="Run train.py to generate ablation results.";return}
+$("#ablLede").textContent=`Each study changes one thing and holds the rest fixed. Models were trained on ${fmt(A.train_size)} cells and scored on the full test set.`;
+const base={maintainAspectRatio:false};
+chart("aTrees",{type:"line",data:{labels:A.n_estimators.map(x=>x.n),datasets:[{label:"Test accuracy (%)",data:A.n_estimators.map(x=>x.test_acc),borderColor:"#2c6a4c",yAxisID:"y"},{label:"Fit time (s)",data:A.n_estimators.map(x=>x.fit_s),borderColor:"#b8801e",borderDash:[5,4],yAxisID:"y1"}]},
+options:{...base,scales:{y:{title:{display:true,text:"Accuracy (%)"}},y1:{position:"right",grid:{display:false},title:{display:true,text:"Seconds"}}}}});
+chart("aDepth",{type:"line",data:{labels:A.max_depth.map(x=>x.depth),datasets:[{label:"Train",data:A.max_depth.map(x=>x.train_acc),borderColor:"#a9c7b3"},{label:"Test",data:A.max_depth.map(x=>x.test_acc),borderColor:"#2c6a4c"}]},
+options:{...base,scales:{x:{title:{display:true,text:"max_depth"}}}}});
+chart("aFeat",{type:"bar",data:{labels:A.feature_groups.map(x=>x.variant),datasets:[{label:"Test accuracy (%)",data:A.feature_groups.map(x=>x.test_acc),backgroundColor:"#2c6a4c"}]},
+options:{...base,indexAxis:"y",plugins:{legend:{display:false}},scales:{x:{min:40,max:100}}}});
+chart("aFrac",{type:"line",data:{labels:A.data_fraction.map(x=>fmt(x.n)),datasets:[{label:"Test accuracy (%)",data:A.data_fraction.map(x=>x.test_acc),borderColor:"#2f6f9f"}]},
+options:{...base,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:"Training cells"}}}}});
+$("#tScale").innerHTML=`<tr><th>Model</th><th>Raw %</th><th>Scaled %</th></tr>`+A.scaling.map(s=>`<tr><td>${s.model}</td><td>${s.raw}</td><td>${s.scaled}</td></tr>`).join("")}
+
+function biome(){const B=M.biome;if(!B)return;const mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
+const draw=()=>{const m=B.models[$("#bModel").value];
+chart("bBars",{type:"bar",data:{labels:B.areas,datasets:[{label:"Trained inside the area",data:m.within,backgroundColor:"#2c6a4c"},{label:"Trained on the other three",data:m.loao,backgroundColor:"#b8801e"}]},
+options:{maintainAspectRatio:false,scales:{y:{min:0,max:100,title:{display:true,text:"Test accuracy (%)"}}}}})};
+$("#bModel").innerHTML=Object.keys(B.models).map(n=>`<option ${n===M.best_model?"selected":""}>${n}</option>`).join("");$("#bModel").onchange=draw;draw();
+const tot=B.area_class_counts.map(r=>r.reduce((a,b)=>a+b,0));
+chart("bMix",{type:"bar",data:{labels:B.areas,datasets:M.classes.map((c,i)=>({label:c,data:B.area_class_counts.map((r,a)=>+(r[i]/tot[a]*100).toFixed(1)),backgroundColor:CC[i]}))},
+options:{maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true,max:100,title:{display:true,text:"Share of cells (%)"}}},plugins:{legend:{labels:{boxWidth:10,font:{size:11}}}}}});
+$("#tBiome").innerHTML=`<tr><th>Model</th><th>Inside area %</th><th>Held-out area %</th><th>Drop (points)</th></tr>`+Object.entries(B.models).map(([n,v])=>{const w=mean(v.within),l=mean(v.loao);return`<tr><td>${n}</td><td>${w.toFixed(1)}</td><td>${l.toFixed(1)}</td><td>${(w-l).toFixed(1)}</td></tr>`}).join("")}
+
+function classes(){const f=M.per_class,names=Object.keys(f);
+$("#tF1").innerHTML=`<tr><th>Model</th>${M.classes.map(c=>`<th>${c}</th>`).join("")}</tr>`+names.map(n=>`<tr><td>${n}</td>${f[n].f1.map(v=>{const t=Math.max(0,(v-30)/70);return`<td style="background:rgba(44,106,76,${(.08+.85*t).toFixed(2)});color:${t>.55?"#fff":"#12251c"}">${v}</td>`}).join("")}</tr>`).join("")+
+`<tr><td>Test support</td>${f[names[0]].support.map(s=>`<td>${fmt(s)}</td>`).join("")}</tr>`;
+$("#cmTitle").textContent="Confusion matrix, "+M.best_model;
+$("#tCM").innerHTML=`<tr><th></th>${M.classes.map(c=>`<th>${c.split("/")[0]}</th>`).join("")}</tr>`+M.confusion_matrix.map((row,i)=>{const s=row.reduce((a,b)=>a+b,0)||1;
+return`<tr><td>${M.classes[i]}</td>${row.map(v=>{const p=v/s;return`<td style="background:rgba(44,106,76,${(.05+.95*p).toFixed(2)});color:${p>.5?"#fff":"#12251c"}">${(p*100).toFixed(1)}</td>`}).join("")}</tr>`}).join("");
+const gi=M.group_importance;$("#fiModel").innerHTML=Object.keys(gi).map(n=>`<option>${n}</option>`).join("");
+const dfi=()=>{const g=Object.entries(gi[$("#fiModel").value]).sort((a,b)=>b[1]-a[1]);
+chart("fiChart",{type:"bar",data:{labels:g.map(x=>x[0]),datasets:[{data:g.map(x=>+(x[1]*100).toFixed(1)),backgroundColor:"#2c6a4c"}]},options:{maintainAspectRatio:false,indexAxis:"y",plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:"Share of total importance (%)"}}}}})};
+$("#fiModel").onchange=dfi;dfi()}
+
+function method(){const m=M.meta;$("#methodTxt").innerHTML=`<p class="note">Data: UCI Forest Cover Type, ${fmt(m.n_total)} cells used, 54 features, 7 classes. Stratified ${Math.round((1-m.test_size)*100)}/${Math.round(m.test_size*100)} split (${fmt(M.n_train)} train, ${fmt(M.n_test)} test), seed ${m.seed}.</p>
+<p class="note">Scaling is applied only inside the KNN and Logistic Regression pipelines. Cross-validation uses ${m.cv_folds} stratified folds on a ${fmt(m.cv_sample)}-cell subsample of the training set. Significance uses McNemar's test with continuity correction on paired predictions.</p>
+<p class="note">Software: Python ${m.python}, scikit-learn ${m.sklearn}.</p>`}
+
+(async()=>{try{M=await (await fetch("/api/metrics")).json();if(!M.results)throw 0}catch{$("#loadErr").textContent="No trained models found. Run python train.py --quick in the backend folder, then reload.";return}
+$("#model").innerHTML=M.results.map(r=>`<option ${r.model===M.best_model?"selected":""}>${r.model}</option>`).join("");
+M.examples.forEach((e,i)=>$("#example").add(new Option(e.label,i)));
+overview();cost();ablation();biome();classes();method()})();
+
+const links=$$("#nav a");
+$$("main section").forEach(sec=>new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+sec.id))}),{rootMargin:"-40% 0px -55% 0px"}).observe(sec));
+</script>
+</body>
+</html>
