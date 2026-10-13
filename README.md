@@ -1,5 +1,9 @@
 # Biome-Locked Forest Cover Classification
 
+
+LIVE LINK :https://forest-cover-app.onrender.com
+
+
 Full-stack companion to "Biome-Locked Learning and the Cost of Multimodal Reasoning".
 Six classifiers on the UCI Forest Cover Type data, with measured reasoning cost, ablations,
 cross-validation, significance tests and a biome-locked (leave-one-wilderness-area-out) evaluation.
