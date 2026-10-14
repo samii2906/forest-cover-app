@@ -69,7 +69,7 @@ pre{background:var(--deep);color:#d6e8dc;padding:16px;border-radius:4px;overflow
 <aside>
   <div class="brand">Forest cover<br>classifier</div>
   <nav id="nav">
-    <a href="#overview" class="on">Overview</a><a href="#classify">Classify a location</a>
+    <a href="#overview" class="on">Overview</a><a href="#classify">Classify a location</a><a href="#batch">Batch prediction</a>
     <a href="#cost">Accuracy and cost</a><a href="#ablation">Ablations</a>
     <a href="#biome">Biome-locked test</a><a href="#classes">Classes and features</a>
     <a href="#method">Method and limits</a>
@@ -105,6 +105,24 @@ pre{background:var(--deep);color:#d6e8dc;padding:16px;border-radius:4px;overflow
       <p class="err" id="err"></p>
     </div>
     <div id="resultBox"><p class="note">The answer appears here. The first request loads every model into memory and can take a few seconds.</p></div>
+  </div>
+</section>
+
+<section class="s" id="batch">
+  <h2>Batch prediction</h2>
+  <p class="lede">Classify many locations at once. Download the template, replace its rows with your own, and upload the file. Up to 5,000 rows per file.</p>
+  <div class="bar" style="margin-top:0">
+    <div style="max-width:260px"><label for="batchModel">Model</label><select id="batchModel"></select></div>
+    <div style="flex:0 0 auto"><button class="go" id="tplBtn" style="background:transparent;color:var(--moss);border:1px solid var(--moss)">Download template</button></div>
+    <div style="max-width:300px"><label for="csvFile">Upload CSV</label><input type="file" id="csvFile" accept=".csv"></div>
+  </div>
+  <p id="bMsg" class="note"></p>
+  <div id="batchOut" style="display:none">
+    <div class="two" style="margin-top:14px">
+      <div><h3>Predicted cover types</h3><div class="chartbox sm"><canvas id="batchChart"></canvas></div></div>
+      <div><h3>Results</h3><div class="scroll" style="max-height:300px;overflow-y:auto"><table class="t" id="tBatch"></table></div>
+        <p class="note" id="bNote"></p><button class="go" id="dlBtn" style="margin-top:8px">Download results CSV</button></div>
+    </div>
   </div>
 </section>
 
@@ -275,10 +293,45 @@ function method(){const m=M.meta;$("#methodTxt").innerHTML=`<p class="note">Data
 <p class="note">Scaling is applied only inside the KNN and Logistic Regression pipelines. Cross-validation uses ${m.cv_folds} stratified folds on a ${fmt(m.cv_sample)}-cell subsample of the training set. Significance uses McNemar's test with continuity correction on paired predictions.</p>
 <p class="note">Software: Python ${m.python}, scikit-learn ${m.sklearn}.</p>`}
 
+const BCOLS=["elevation","aspect","slope","h_dist_hydrology","v_dist_hydrology","h_dist_roadways","hillshade_9am","hillshade_noon","hillshade_3pm","h_dist_fire","wilderness_area","soil_type"];
+let batchData=null;
+function saveCsv(name,text){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"text/csv"}));a.download=name;a.click();URL.revokeObjectURL(a.href)}
+function batch(){
+  $("#batchModel").innerHTML=M.results.map(r=>`<option ${r.model===M.best_model?"selected":""}>${r.model}</option>`).join("");
+  $("#tplBtn").onclick=()=>{const rows=M.examples.map(e=>{const f=e.features;return[...f.slice(0,10).map(Math.round),f.slice(10,14).indexOf(1)+1,f.slice(14,54).indexOf(1)+1].join(",")});saveCsv("locations_template.csv",BCOLS.join(",")+"\n"+rows.join("\n")+"\n")};
+  $("#csvFile").onchange=e=>{const f=e.target.files[0];if(f)f.text().then(runBatch)};
+  $("#dlBtn").onclick=()=>{if(!batchData)return;const{rows,d}=batchData;
+    saveCsv("predictions.csv",[...BCOLS,"prediction","confidence_pct"].join(",")+"\n"+rows.map((r,i)=>[...BCOLS.map(c=>r[c]),d.results[i].prediction,d.results[i].confidence].join(",")).join("\n")+"\n")};
+}
+async function runBatch(text){
+  const msg=$("#bMsg");msg.className="note";$("#batchOut").style.display="none";
+  const lines=text.replace(/^\uFEFF/,"").split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2){msg.className="err";msg.textContent="The file needs a header row and at least one data row.";return}
+  const head=lines.shift().split(",").map(h=>h.trim().toLowerCase());
+  const miss=BCOLS.filter(c=>!head.includes(c));
+  if(miss.length){msg.className="err";msg.textContent="Missing columns: "+miss.join(", ");return}
+  if(lines.length>5000){msg.className="err";msg.textContent="Too many rows. The limit is 5,000 per file.";return}
+  const rows=lines.map(l=>{const v=l.split(",");const o={};BCOLS.forEach(c=>{const x=v[head.indexOf(c)];o[c]=x===undefined||x.trim()===""?NaN:Number(x)});return o});
+  const bad=rows.findIndex(r=>BCOLS.some(c=>!Number.isFinite(r[c])));
+  if(bad>=0){msg.className="err";msg.textContent=`Row ${bad+1} has a missing or non-numeric value.`;return}
+  msg.textContent=`Classifying ${rows.length} locations...`;
+  try{const r=await fetch("/api/predict_batch",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:$("#batchModel").value,rows})});
+    const d=await r.json();
+    if(!r.ok){let t="The request failed.";if(Array.isArray(d.detail)){const e=d.detail[0],l=e.loc||[];t=l[1]==="rows"?`Row ${l[2]+1}, ${l[3]}: ${e.msg}`:e.msg}else if(d.detail)t=d.detail;throw new Error(t)}
+    batchData={rows,d};showBatch()}catch(e){msg.className="err";msg.textContent=e.message}
+}
+function showBatch(){const{rows,d}=batchData;
+  $("#bMsg").textContent=`${fmt(d.count)} locations classified by ${d.model} in ${d.total_ms} ms (${d.ms_per_1k} ms per 1,000).`;
+  $("#batchOut").style.display="block";
+  const cnt=M.classes.map(c=>d.results.filter(r=>r.prediction===c).length);
+  chart("batchChart",{type:"bar",data:{labels:M.classes,datasets:[{label:"Locations",data:cnt,backgroundColor:CC}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:"Locations"},ticks:{precision:0}}}}});
+  $("#tBatch").innerHTML=`<tr><th>Row</th><th>Elevation</th><th>Area</th><th>Soil</th><th>Prediction</th><th>Confidence</th></tr>`+d.results.slice(0,100).map((r,i)=>`<tr><td>${r.row}</td><td>${rows[i].elevation}</td><td>${AREAS[rows[i].wilderness_area-1]||"-"}</td><td>${rows[i].soil_type}</td><td>${r.prediction}</td><td>${r.confidence}%</td></tr>`).join("");
+  $("#bNote").textContent=d.count>100?`Showing the first 100 of ${fmt(d.count)} rows. The download has all of them.`:""}
+
 (async()=>{try{M=await (await fetch("/api/metrics")).json();if(!M.results)throw 0}catch{$("#loadErr").textContent="No trained models found. Run python train.py --quick in the backend folder, then reload.";return}
 $("#model").innerHTML=M.results.map(r=>`<option ${r.model===M.best_model?"selected":""}>${r.model}</option>`).join("");
 M.examples.forEach((e,i)=>$("#example").add(new Option(e.label,i)));
-overview();cost();ablation();biome();classes();method()})();
+overview();cost();ablation();biome();classes();method();batch()})();
 
 const links=$$("#nav a");
 $$("main section").forEach(sec=>new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+sec.id))}),{rootMargin:"-40% 0px -55% 0px"}).observe(sec));

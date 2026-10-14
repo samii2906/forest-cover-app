@@ -32,8 +32,7 @@ def load_model(name: str):
     return joblib.load(path)
 
 
-class PredictRequest(BaseModel):
-    model: str = "Random Forest"
+class Row(BaseModel):
     elevation: float = Field(..., ge=1800, le=4000)
     aspect: float = Field(..., ge=0, le=360)
     slope: float = Field(..., ge=0, le=90)
@@ -48,7 +47,16 @@ class PredictRequest(BaseModel):
     soil_type: int = Field(..., ge=1, le=40)
 
 
-def vectorise(r: PredictRequest):
+class PredictRequest(Row):
+    model: str = "Random Forest"
+
+
+class BatchRequest(BaseModel):
+    model: str = "Random Forest"
+    rows: list[Row] = Field(..., min_length=1, max_length=5000)
+
+
+def vectorise(r: Row):
     wild = [0.0] * 4; wild[r.wilderness_area - 1] = 1.0
     soil = [0.0] * 40; soil[r.soil_type - 1] = 1.0
     return np.array([[r.elevation, r.aspect, r.slope, r.h_dist_hydrology, r.v_dist_hydrology,
@@ -81,6 +89,21 @@ def predict(req: PredictRequest):
 def predict_all(req: PredictRequest):
     m, x = metrics(), vectorise(req)
     return {"results": [run(r["model"], x, m["classes"]) for r in m["results"]]}
+
+
+@app.post("/api/predict_batch")
+def predict_batch(req: BatchRequest):
+    classes = metrics()["classes"]
+    X = np.vstack([vectorise(r) for r in req.rows])
+    model = load_model(req.model)
+    t = time.perf_counter()
+    proba = model.predict_proba(X)
+    ms = (time.perf_counter() - t) * 1000
+    top = proba.argmax(1)
+    return {"model": req.model, "count": len(top), "total_ms": round(ms, 1),
+            "ms_per_1k": round(ms / len(top) * 1000, 1),
+            "results": [{"row": i + 1, "prediction": classes[k], "cover_type_id": int(k) + 1,
+                         "confidence": round(float(proba[i, k]) * 100, 2)} for i, k in enumerate(top)]}
 
 
 @app.get("/api/health")
